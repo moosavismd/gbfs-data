@@ -1,7 +1,7 @@
 import requests
 import os
 
-def fetch_and_process_data():
+def fetch_and_process_data(event, context):
 
   providers = []
 
@@ -30,4 +30,4 @@ def fetch_and_process_data():
     print(f"  Available Vehicles: {total_available_vehicles}")
     print()
 if __name__ == "__main__":
-  fetch_and_process_data()
+  fetch_and_process_data(None,None)

@@ -15,3 +15,9 @@ variable "schedule_expression" {
   type        = string
   default     = "rate(2 minutes)" # You can modify this value as needed
 }
+
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket for storing lambda function zip file"
+  type        = string
+  default     = "lambda_function_gbfs_bucket"
+}

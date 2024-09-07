@@ -14,6 +14,9 @@ The project is designed with the following goals:
 To deploy and run this project, ensure you have the following:
 - **AWS Account**: Set up with necessary permissions.
 - **GitHub Actions**: Configured with AWS credentials stored in secrets.
+  - Set the following secrets in your GitHub repository settings under `Settings > Secrets > Actions`:
+    - `AWS_ACCESS_KEY_ID`: Your AWS Access Key ID.
+    - `AWS_SECRET_ACCESS_KEY`: Your AWS Secret Access Key.
 - **Terraform**: Installed locally to manage infrastructure as code.
 
 ## Instructions to Build and Run

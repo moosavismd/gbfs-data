@@ -52,8 +52,10 @@ resource "aws_lambda_function" "test_lambda" {
   s3_key        = aws_s3_object.lambda_function.key
 
   runtime = "python3.12"
-
   timeout = 30
+
+  source_code_hash = aws_s3_object.lambda_function.etag
+  
 
   environment {
     variables = {
@@ -130,10 +132,10 @@ resource "aws_cloudwatch_metric_alarm" "available_vehicles" {
 
   alarm_name          = "${each.key}_AvailableVehiclesAlarm"
   comparison_operator = "LessThanOrEqualToThreshold"
-  evaluation_periods  = "1"
+  evaluation_periods  = "5"
   metric_name         = "AvailableVehicles"
   namespace           = "GBFSMonitoring"
-  period              = "60"
+  period              = "120"
   statistic           = "Average"
   threshold           = var.vehicle_count_alert_threshold
   alarm_description   = "Alarm when AvailableVehicles is below threshold for ${each.key}"
@@ -144,4 +146,23 @@ resource "aws_cloudwatch_metric_alarm" "available_vehicles" {
   }
 
   alarm_actions = [aws_sns_topic.email_sns.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "lambda_error_alarm" {
+  alarm_name          = "LambdaErrorAlarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = "120"
+  statistic           = "Sum"
+  threshold           = "1" 
+  alarm_description   = "Alert when Lambda function encounters errors"
+  actions_enabled     = true
+
+  dimensions = {
+    FunctionName = aws_lambda_function.test_lambda.function_name
+  }
+
+  alarm_actions = [aws_sns_topic.email_sns.arn] 
 }

@@ -36,4 +36,4 @@ jobs:
       run: |
         cd terraform
         terraform init
-        terraform apply -auto-approve
+        terraform apply -var-file="override.tfvars" -auto-approve

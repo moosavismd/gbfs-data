@@ -16,7 +16,7 @@ providers_name = [
     name = "Almere"
   },
   {
-    url  = "https://api.ridecheck.app/gbfs/v3/amersfoort/vehicle_status.json"
+    url  = "https://api.ridecheck.app/gbfs/v3/azmersfoort/vehicle_status.json"
     name = "Amersfoort"
   },
   {

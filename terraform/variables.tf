@@ -27,3 +27,9 @@ variable "oncall_email" {
   type        = string
   default     = "moosavi.smd@gmail.com"
 }
+
+variable "vehicle_count_alert_threshold" {
+  description = "Threshold for number of vehicle to trigger an alert"
+  type        = number
+  default     = "0"
+}

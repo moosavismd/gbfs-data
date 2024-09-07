@@ -125,16 +125,16 @@ resource "aws_sns_topic_subscription" "email_sns_subscription" {
   endpoint  = var.oncall_email
 }
 
-resource "aws_cloudwatch_metric_alarm" "available_vehicles_zero" {
-  alarm_name          = "AvailableVehiclesZeroAlarm"
+resource "aws_cloudwatch_metric_alarm" "available_vehicles" {
+  alarm_name          = "AvailableVehiclesAlarm"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "AvailableVehicles"
   namespace           = "GBFSMonitoring"
   period              = "60"
   statistic           = "Average"
-  threshold           = "50000"
-  alarm_description   = "Alarm when AvailableVehicles is zero for any provider"
+  threshold           = var.vehicle_count_alert_threshold
+  alarm_description   = "Alarm when AvailableVehicles is below threshold for any provider"
   actions_enabled     = true
 
   dimensions = {

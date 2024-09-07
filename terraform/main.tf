@@ -65,6 +65,8 @@ resource "aws_lambda_function" "test_lambda" {
       PROVIDER_3_NAME = "Amsterdam"
     }
   }
+
+  depends_on = [aws_s3_object.lambda_function]
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_trigger" {

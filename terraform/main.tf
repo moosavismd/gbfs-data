@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_policy" {
   role       = aws_iam_role.iam_for_lambda.name
 }
 
-resource "aws_s3_bucket_object" "lambda_function" {
+resource "aws_s3_object" "lambda_function" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "function.zip"
   source = "../function.zip"
@@ -49,7 +49,7 @@ resource "aws_lambda_function" "test_lambda" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "main.fetch_and_process_data"
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
-  s3_key        = aws_s3_bucket_object.lambda_function.key
+  s3_key        = aws_s3_object.lambda_function.key
   
   runtime = "python3.12"
 
@@ -77,6 +77,8 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
   rule      = aws_cloudwatch_event_rule.lambda_trigger.name
   target_id = var.lambda_function_name
   arn       = aws_lambda_function.test_lambda.arn
+
+  depends_on = [aws_lambda_function.test_lambda]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_invoke" {
@@ -85,6 +87,8 @@ resource "aws_lambda_permission" "allow_cloudwatch_invoke" {
   function_name = var.lambda_function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.lambda_trigger.arn
+
+  depends_on = [aws_lambda_function.test_lambda]
 }
 
 data "aws_iam_policy_document" "put_metric_data_policy" {

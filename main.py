@@ -1,4 +1,5 @@
 import requests
+import boto3
 import os
 
 def fetch_and_process_data(event, context):
@@ -13,21 +14,44 @@ def fetch_and_process_data(event, context):
       providers.append({"url": url, "name": name})
 
   print(providers)
-
+  cw = boto3.client('cloudwatch')
+  
   for provider in providers:
     vehicle_status_url = provider["url"]
     response = requests.get(vehicle_status_url)
     response.raise_for_status()
-    vehicle_data = response.json()
+    vehicle_fetch_data = response.json()
 
-    vehicles = vehicle_data["data"]["vehicles"]
+    vehicles = vehicle_fetch_data["data"]["vehicles"]
     total_vehicles = len(vehicles)
     available_vehicles = [vehicle for vehicle in vehicles if not vehicle["is_disabled"] and not vehicle["is_reserved"]]
     total_available_vehicles = len(available_vehicles)
-
+    cw.put_metric_data(
+      Namespace='GBFSMonitoring',
+      MetricData=[
+        {
+          'MetricName': 'TotalVehicles',
+          'Value': total_vehicles,
+          'Unit': 'Count',
+          'Dimensions': [
+            {'Name': 'ProviderName', 'Value': provider['name']}
+          ]
+        },
+        {
+          'MetricName': 'AvailableVehicles',
+          'Value': total_available_vehicles,
+          'Unit': 'Count',
+          'Dimensions': [
+            {'Name': 'ProviderName', 'Value': provider['name']}
+          ]
+        }
+      ]
+    )
     print(f"{provider['name']}:")
     print(f"  Total Vehicles: {total_vehicles}")
     print(f"  Available Vehicles: {total_available_vehicles}")
     print()
+
 if __name__ == "__main__":
   fetch_and_process_data(None,None)
+  

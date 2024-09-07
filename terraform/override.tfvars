@@ -20,7 +20,7 @@ providers_name = [
     name = "Amersfoort"
   },
   {
-    url  = "https://api.ridecheck.app/gbfs/v3/amsterdam/vehicle_status.json"
+    url  = "https://api.ridecheck.app/gbfs/v3/msterdam/vehicle_status.json"
     name = "Amsterdam"
   }
 ]

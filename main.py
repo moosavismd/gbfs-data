@@ -14,11 +14,12 @@ def fetch_and_process_data(event, context):
 
   print(providers)
   cw = boto3.client('cloudwatch')
-  
+
+
   for provider in providers:
     vehicle_status_url = provider["url"]
     try:
-      response = requests.get(vehicle_status_url, timeout=10)  # Added timeout for request
+      response = requests.get(vehicle_status_url, timeout=10)
       response.raise_for_status()
       vehicle_fetch_data = response.json()
 

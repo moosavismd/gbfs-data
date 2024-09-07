@@ -145,3 +145,22 @@ resource "aws_cloudwatch_metric_alarm" "available_vehicles" {
 
   alarm_actions = [aws_sns_topic.email_sns.arn]
 }
+
+resource "aws_cloudwatch_metric_alarm" "lambda_error_alarm" {
+  alarm_name          = "LambdaErrorAlarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "1" 
+  alarm_description   = "Alert when Lambda function encounters errors"
+  actions_enabled     = true
+
+  dimensions = {
+    FunctionName = aws_lambda_function.test_lambda.function_name
+  }
+
+  alarm_actions = [aws_sns_topic.email_sns.arn] 
+}

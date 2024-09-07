@@ -22,7 +22,7 @@ resource "aws_iam_role_policy_attachment" "lambda_cloudwatch_logs_policy" {
 }
 
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = var.s3_bucket_name 
+  bucket = var.s3_bucket_name
 }
 
 resource "aws_s3_bucket_versioning" "lambda_bucket_versioning" {
@@ -50,7 +50,7 @@ resource "aws_lambda_function" "test_lambda" {
   handler       = "main.fetch_and_process_data"
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_function.key
-  
+
   runtime = "python3.12"
 
   timeout = 30
@@ -113,4 +113,33 @@ resource "aws_cloudwatch_dashboard" "gbfs_dashboard" {
   dashboard_name = "GBFSMonitoringDashboard"
 
   dashboard_body = jsonencode(local.gbfs_dashboard_widgets)
+}
+
+resource "aws_sns_topic" "email_sns" {
+  name = "AvailableVehiclesAlarmTopic"
+}
+
+resource "aws_sns_topic_subscription" "email_sns_subscription" {
+  topic_arn = aws_sns_topic.email_sns.arn
+  protocol  = "email"
+  endpoint  = var.oncall_email
+}
+
+resource "aws_cloudwatch_metric_alarm" "available_vehicles_zero" {
+  alarm_name          = "AvailableVehiclesZeroAlarm"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "AvailableVehicles"
+  namespace           = "GBFSMonitoring"
+  period              = "60"
+  statistic           = "Average"
+  threshold           = "50000"
+  alarm_description   = "Alarm when AvailableVehicles is zero for any provider"
+  actions_enabled     = true
+
+  dimensions = {
+    ProviderName = "*"
+  }
+
+  alarm_actions = [aws_sns_topic.email_sns.arn]
 }

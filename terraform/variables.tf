@@ -21,3 +21,9 @@ variable "s3_bucket_name" {
   type        = string
   default     = "lambda-function-gbfs-bucket"
 }
+
+variable "oncall_email" {
+  description = "Email of the on-call to send alert"
+  type        = string
+  default     = "moosavi.smd@gmail.com"
+}

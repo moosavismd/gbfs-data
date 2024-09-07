@@ -19,6 +19,7 @@ def fetch_and_process_data(event, context):
   for provider in providers:
     vehicle_status_url = provider["url"]
     try:
+      print("Inside of try_cache")
       response = requests.get(vehicle_status_url, timeout=10)
       response.raise_for_status()
       vehicle_fetch_data = response.json()

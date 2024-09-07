@@ -57,12 +57,12 @@ resource "aws_lambda_function" "test_lambda" {
 
   environment {
     variables = {
-      PROVIDER_1_URL  = "https://api.ridecheck.app/gbfs/v3/almere/vehicle_status.json"
-      PROVIDER_1_NAME = "Almere"
-      PROVIDER_2_URL  = "https://api.ridecheck.app/gbfs/v3/amersfoort/vehicle_status.json"
-      PROVIDER_2_NAME = "Amersfoort"
-      PROVIDER_3_URL  = "https://api.ridecheck.app/gbfs/v3/amsterdam/vehicle_status.json"
-      PROVIDER_3_NAME = "Amsterdam"
+      PROVIDER_1_URL  = var.providers_name[0].url
+      PROVIDER_1_NAME = var.providers_name[0].name
+      PROVIDER_2_URL  = var.providers_name[1].url
+      PROVIDER_2_NAME = var.providers_name[1].name
+      PROVIDER_3_URL  = var.providers_name[2].url
+      PROVIDER_3_NAME = var.providers_name[2].name
     }
   }
 
@@ -126,7 +126,9 @@ resource "aws_sns_topic_subscription" "email_sns_subscription" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "available_vehicles" {
-  alarm_name          = "AvailableVehiclesAlarm"
+  for_each = { for provider in var.providers_name : provider.name => provider }
+
+  alarm_name          = "${each.key}_AvailableVehiclesAlarm"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "AvailableVehicles"
@@ -134,11 +136,11 @@ resource "aws_cloudwatch_metric_alarm" "available_vehicles" {
   period              = "60"
   statistic           = "Average"
   threshold           = var.vehicle_count_alert_threshold
-  alarm_description   = "Alarm when AvailableVehicles is below threshold for any provider"
+  alarm_description   = "Alarm when AvailableVehicles is below threshold for ${each.key}"
   actions_enabled     = true
 
   dimensions = {
-    ProviderName = "Almere"
+    ProviderName = each.value.name
   }
 
   alarm_actions = [aws_sns_topic.email_sns.arn]

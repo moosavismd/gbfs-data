@@ -33,3 +33,25 @@ variable "vehicle_count_alert_threshold" {
   type        = number
   default     = "0"
 }
+
+variable "providers_name" {
+  description = "List of provider information"
+  type = list(object({
+    url  = string
+    name = string
+  }))
+  default = [
+    {
+      url  = "https://api.ridecheck.app/gbfs/v3/almere/vehicle_status.json"
+      name = "Almere"
+    },
+    {
+      url  = "https://api.ridecheck.app/gbfs/v3/amersfoort/vehicle_status.json"
+      name = "Amersfoort"
+    },
+    {
+      url  = "https://api.ridecheck.app/gbfs/v3/amsterdam/vehicle_status.json"
+      name = "Amsterdam"
+    }
+  ]
+}

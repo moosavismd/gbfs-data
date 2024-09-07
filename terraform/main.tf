@@ -138,7 +138,7 @@ resource "aws_cloudwatch_metric_alarm" "available_vehicles" {
   actions_enabled     = true
 
   dimensions = {
-    ProviderName = "*"
+    ProviderName = "Almere"
   }
 
   alarm_actions = [aws_sns_topic.email_sns.arn]

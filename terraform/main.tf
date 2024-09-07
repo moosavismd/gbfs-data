@@ -52,8 +52,10 @@ resource "aws_lambda_function" "test_lambda" {
   s3_key        = aws_s3_object.lambda_function.key
 
   runtime = "python3.12"
-
   timeout = 30
+
+  source_code_hash = aws_s3_object.lambda_function.etag
+  
 
   environment {
     variables = {

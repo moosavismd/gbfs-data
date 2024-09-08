@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - '**'
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Apply Terraform changes'
+        required: true
+        type: boolean
 
 jobs:
   build-and-plan:
@@ -72,9 +78,3 @@ jobs:
         terraform init
         terraform apply -var-file="override.tfvars" -auto-approve
 
-workflow_dispatch:
-  inputs:
-    apply:
-      description: 'Apply Terraform changes'
-      required: true
-      type: boolean

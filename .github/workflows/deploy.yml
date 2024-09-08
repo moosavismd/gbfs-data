@@ -3,13 +3,8 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-        - '**'
+      - '**'
   workflow_dispatch:
-    inputs:
-      apply:
-        description: 'Apply Terraform changes'
-        required: true
-        default: 'false'
 
 jobs:
   build-and-plan:
@@ -47,7 +42,7 @@ jobs:
   apply:
     needs: build-and-plan
     runs-on: ubuntu-latest
-    if: github.event.inputs.apply == 'true'
+    environment: production
     steps:
     - uses: actions/checkout@v2
 

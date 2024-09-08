@@ -45,7 +45,6 @@ jobs:
         terraform plan -var-file="override.tfvars"
 
   apply:
-    needs: build-and-plan
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch'
     steps:

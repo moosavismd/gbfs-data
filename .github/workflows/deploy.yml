@@ -33,7 +33,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Run Terraform Plan
+    - name: Terraform Init and Plan
       run: |
         cd terraform
         terraform init
@@ -42,7 +42,7 @@ jobs:
   apply:
     needs: build-and-plan
     runs-on: ubuntu-latest
-    environment: production
+    if: github.event_name == 'workflow_dispatch'
     steps:
     - uses: actions/checkout@v2
 

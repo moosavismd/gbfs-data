@@ -4,10 +4,15 @@ on:
   push:
     branches:
         - '**'
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Apply Terraform changes'
+        required: true
+        default: 'false'
 
 jobs:
-  build-and-deploy:
+  build-and-plan:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -40,9 +45,9 @@ jobs:
         terraform plan -var-file="override.tfvars"
 
   apply:
-    needs: build-and-deploy
+    needs: build-and-plan
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: github.event.inputs.apply == 'true'
     steps:
     - uses: actions/checkout@v2
 
@@ -53,7 +58,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Run Terraform Apply
+    - name: Terraform Apply
       run: |
         cd terraform
+        terraform init
         terraform apply -var-file="override.tfvars" -auto-approve
